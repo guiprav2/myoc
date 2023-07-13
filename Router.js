@@ -35,7 +35,6 @@ class Router {
     // no matching page found
     this.page = null; // TODO: 404
     d.update();
-    console.log(this.page);
   }
 
   // router is just a portal to the current page
