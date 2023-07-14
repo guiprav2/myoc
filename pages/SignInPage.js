@@ -22,9 +22,15 @@ class SignInPage {
     ev.preventDefault();
     let [p, close] = showModal(d.el(SpinnerModal));
     try {
+      this.error = null;
+      d.update();
       let { email, pwd } = this;
       let res = await protohub.get('/myoc/users', { q: { email, pwd } });
-      if (!res || !res.length) { return }
+      if (!res || !res.length) {
+        this.error = 'Wrong e-mail or password';
+        d.update();
+        return;
+      }
       window.user = res[0];
       console.log(user);
       navigate('/home');
@@ -54,6 +60,11 @@ class SignInPage {
           <div class="flex flex-col gap-1">
             <input class="w-72 py-3 px-5" name="email" placeholder="E-mail">
             <input class="w-72 py-3 px-5" name="pwd" type="password" placeholder="Password">
+            ${d.if(() => this.error, jsx`
+              <span class="text-neutral-800 mt-1 text-sm italic text-red-700 text-center">
+                ${d.text(() => this.error)}
+              </span>
+            `)}
           </div>
           <button class="bg-[#FA3973] text-white w-72 py-3 rounded-full">
             Login
