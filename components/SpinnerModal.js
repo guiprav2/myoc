@@ -3,7 +3,7 @@ import jsx from '../jsx.js';
 
 let SpinnerModal = () => jsx`
   <dialog escape="no">
-    <img src="/img/spinner.svg">
+    <img style="height: 72px" src="/img/spinner.svg">
   </dialog>
 `[0];
 
