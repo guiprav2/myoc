@@ -2,17 +2,18 @@ import SpinnerModal from '../components/SpinnerModal.js';
 import UploadDialog from '../components/UploadDialog.js';
 import d from '../dominant.js';
 import jsx from '../jsx.js';
+import qs from 'https://cdn.skypack.dev/querystring';
 import { navigate } from '../util/url.js';
 import { protohub } from '../util/request.js';
 import { showModal } from '../util/modal.js';
 import { uploadFile } from '../util/file.js';
 
 class EditOC {
-  ocid = null;
   view = 'profile';
 
   constructor(props) {
     this.props = props;
+    this.ocid = qs.decode(location.search.slice(1))?.id;
     this.editing = !this.ocid;
     this.profile = this.content = this.renderProfile();
     (async () => {
@@ -52,6 +53,7 @@ class EditOC {
         q: this.ocid ? { _id: this.ocid } : {},
         body: this.profileData,
       });
+      !this.ocid && history.pushState({}, null, `/create?id=${res._id}`);
       this.ocid = res._id;
       this.editing = false;
       d.update();
