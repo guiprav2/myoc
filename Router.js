@@ -16,8 +16,7 @@ class Router {
     let href = ev.target.closest('a')?.getAttribute?.('href');
     if (!href || /^https?:/.test(href)) { return }
     ev.preventDefault();
-    history.pushState({}, '', href);
-    this.update();
+    if (href !== '#') { history.pushState({}, '', href); this.update() }
   };
 
   // updates router based on current URL

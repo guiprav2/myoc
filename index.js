@@ -1,3 +1,4 @@
+import EditOC from './pages/EditOC.js';
 import Router from './Router.js';
 import SignInPage from './pages/SignInPage.js';
 import SignUpPage from './pages/SignUpPage.js';
@@ -12,6 +13,7 @@ addEventListener('DOMContentLoaded', () => {
     routes: {
       '/': SignInPage,
       '/signup': SignUpPage,
+      '/create': EditOC,
     },
   }));
 });

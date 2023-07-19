@@ -32,8 +32,7 @@ class SignInPage {
         return;
       }
       window.user = res[0];
-      console.log(user);
-      navigate('/home');
+      navigate('/create');
     } finally {
       close();
     }

@@ -64,7 +64,7 @@ function buildRuleSet(sel, styles) {
 }
 
 function buildRule(mods, semantic, sel, styles) {
-  let { bp, bpid, sts } = parseMods(mods), rule = [];
+  let { bp, bpid, spsts, sts } = parseMods(mods), rule = [];
 
   if (bp === 'print') {
     rule.push(`@media print {`);
@@ -72,7 +72,7 @@ function buildRule(mods, semantic, sel, styles) {
     rule.push(`@media (min-width: ${bp}) {`);
   }
 
-  rule.push(`${buildSelector(sts, semantic, sel)} {`);
+  rule.push(`${buildSelector(spsts, sts, semantic, sel)} {`);
   rule.push(...buildPropertyLines(styles));
   rule.push('}');
 
@@ -80,8 +80,14 @@ function buildRule(mods, semantic, sel, styles) {
   return rule.join('\n');
 }
 
-function buildSelector(sts, semantic, sel) {
-  return `.${CSS.escape(sel)}${sts.length ? `:${sts.join(':')}` : ''}`;
+function buildSelector(spsts, sts, semantic, sel) {
+  let t = [
+    spsts.includes('group-hover') && '.group',
+    spsts.includes('popup') && '[checked] +',
+    `.${CSS.escape(sel)}${sts.filter(Boolean).length ? `:${sts.filter(Boolean).join(':')}` : ''}`,
+  ].filter(Boolean).join(' ');
+  spsts.includes('popup') && console.log(t);
+  return t;
 }
 
 function buildPropertyLines(styles) {
@@ -99,7 +105,7 @@ function buildPropertyLines(styles) {
 }
 
 function parseMods(xs) {
-  let bp = null, bpid = null, sts = [];
+  let bp = null, bpid = null, spsts = [], sts = [];
 
   for (let x of xs) {
     if (parseMods.breakpoints[x]) {
@@ -108,7 +114,8 @@ function parseMods(xs) {
       continue;
     }
 
-    if (parseMods.specialStates[x]) {
+    if (parseMods.specialStates[x] != null) {
+      spsts.push(x);
       sts.push(parseMods.specialStates[x]);
       continue;
     }
@@ -116,7 +123,7 @@ function parseMods(xs) {
     x !== 'base' && sts.push(x);
   }
 
-  return { bp, bpid, sts };
+  return { bp, bpid, spsts, sts };
 }
 
 parseMods.breakpoints = {
@@ -129,7 +136,7 @@ parseMods.breakpoints = {
 };
 
 parseMods.specialStates = {
-  'group-hover': 'hover',
+  'group-hover': 'hover', 'not-first-child': 'nth-child(n + 2)', popup: '',
 };
 
 windy.bem = (name, els) => Object.fromEntries(Object.entries(els).map(
@@ -255,7 +262,7 @@ windy.builders = [
     order: !Number.isNaN(Number(x)) ? x : { first: -9999, last: 9999, none: 0 }[x] })],
   [/^(static|fixed|absolute|relative|sticky)$/, x => ({ position: x })], // FIXME: relative
   [/^(-)?(left|right|top|bottom)-(.+)$/, (x, y, z) => ({
-    [y]: z.startsWith('[') ? (x || '') + z.slice(1, -1) :
+    [y]: z.startsWith('[') ? (x || '') + z.slice(1, -1).replace(/_/g, ' ') :
       /^\d+\/\d+$/.test(z) ? `calc((${x || ''}${z})*100%)`: (x || '') + {
       0: 0, '0.5': '0.125rem', 1: '0.25rem', '1.5': '0.375rem', 2: '0.5rem', '2.5': '0.625rem',
       3: '0.75rem', 4: '1rem', 5: '1.25rem', 6: '1.5rem', 7: '1.75rem', 8: '2rem',
@@ -379,7 +386,10 @@ windy.builders = [
     }[x],
   })],
   [/^(font|text)-([\w\d-\/]+|\[[^\]]+\])$/, (x, y) => ({ color: color(y) })],
-  [/^(sans|serif)$/, x => ({ 'font-family': { sans: 'sans-serif' }[x] || x })],
+  [/^(sans|serif|mono|sntregular)$/, x => ({ 'font-family': {
+    sans: 'sans-serif', mono: 'monospace',
+    sntregular: '"Sonetto Regular"',
+  }[x] || x })],
   [/^(italic)$/, x => ({ 'font-style': x })],
   [/^not-italic$/, () => ({ 'font-style': 'normal' })],
   [/^(underline|overline|line-through|no-underline)$/, x =>
