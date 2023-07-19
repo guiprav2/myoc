@@ -126,14 +126,15 @@ class EditOC {
       class="max-w-5xl min-h-screen mx-auto p-0 sans bg-[#F1F1F1] flex flex-col pb-10 shadow-lg"
       ${{ onChange: this.changed }}
     >
-      <div class="bg-[#2D2829]">
-        <div class="flex justify-between text-[#FA3973] p-2">
-          <button class="nf nf-fa-bars w-10 aspect-square"></button>
-          <div class="flex">
-            <button class="nf nf-fa-home w-10 aspect-square"></button>
-            <button class="nf nf-md-magnify w-10 aspect-square"></button>
+      <div class="relative">
+        <div class="sticky left-0 right-0 top-0 bg-[#2D2829] z-10">
+          <div class="flex justify-between text-[#FA3973] p-2">
+            <button class="nf nf-fa-bars w-10 aspect-square"></button>
+            <div class="flex">
+              <button class="nf nf-fa-home w-10 aspect-square"></button>
+              <button class="nf nf-md-magnify w-10 aspect-square"></button>
+            </div>
           </div>
-        </div>
       </div>
       <div class="mt-8 mb-5 flex gap-3 items-center grid grid-cols-3 px-4">
         <input
@@ -216,41 +217,43 @@ class EditOC {
       class="max-w-5xl min-h-screen mx-auto sans bg-[#F1F1F1] flex flex-col"
       ${{ model: this, onChange: this.changed, onSubmit: this.submitWork }}
     >
-      <div class="bg-[#2D2829]">
-        <div class="flex justify-between text-[#FA3973] p-2">
-          <button
-            class="nf nf-fa-arrow_left w-10 aspect-square"
-            ${{ type: 'button', onClick: this.back }}
-          ></button>
+      <div class="relative">
+        <div class="sticky left-0 right-0 top-0 bg-[#2D2829] z-10">
+          <div class="flex justify-between text-[#FA3973] p-2">
+            <button
+              class="nf nf-fa-arrow_left w-10 aspect-square"
+              ${{ type: 'button', onClick: this.back }}
+            ></button>
+          </div>
         </div>
-      </div>
-      <button
-        class="w-64 mx-auto aspect-square bg-neutral-300 flex justify-center items-center text-5xl text-white mt-16"
-        ${{ type: 'button', onClick: this.uploadWork }}
-      >
-        ${d.if(() => !this.workData.url, jsx`<div>+</div>`, jsx`
-          <img ${{ class: 'h-full object-contain', src: () => this.workData.url }}>
-        `)}
-      </button>
-      <div class="w-64 mx-auto mt-12 text-sm font-[#FA3973] flex flex-col gap-10">
-        <div class="border-b border-[#A7A7A7]">
-          <div>Title</div>
-          <input class="w-full bg-transparent outline-none text-[#333333]" name="title">
-        </div>
-        <div class="border-b border-[#A7A7A7]">
-          <div>Description</div>
-          <input class="w-full bg-transparent outline-none text-[#333333]" name="description">
-        </div>
-        <div class="border-b border-[#A7A7A7]">
-          <div>Tags</div>
-          <input class="w-full bg-transparent outline-none text-[#333333]" name="tags">
-        </div>
-        <button ${{
-          class: ['h-10 mb-16 text-white bg-[#FA3973]', () => !this.validWork && 'bg-[#FFA1C4]'],
-          disabled: () => !this.validWork,
-        }}>
-          Submit
+        <button
+          class="w-64 mx-auto aspect-square bg-neutral-300 flex justify-center items-center text-5xl text-white mt-16"
+          ${{ type: 'button', onClick: this.uploadWork }}
+        >
+          ${d.if(() => !this.workData.url, jsx`<div>+</div>`, jsx`
+            <img ${{ class: 'h-full object-contain', src: () => this.workData.url }}>
+          `)}
         </button>
+        <div class="w-64 mx-auto mt-12 text-sm font-[#FA3973] flex flex-col gap-10">
+          <div class="border-b border-[#A7A7A7]">
+            <div>Title</div>
+            <input class="w-full bg-transparent outline-none text-[#333333]" name="title">
+          </div>
+          <div class="border-b border-[#A7A7A7]">
+            <div>Description</div>
+            <input class="w-full bg-transparent outline-none text-[#333333]" name="description">
+          </div>
+          <div class="border-b border-[#A7A7A7]">
+            <div>Tags</div>
+            <input class="w-full bg-transparent outline-none text-[#333333]" name="tags">
+          </div>
+          <button ${{
+            class: ['h-10 mb-16 text-white bg-[#FA3973]', () => !this.validWork && 'bg-[#FFA1C4]'],
+            disabled: () => !this.validWork,
+          }}>
+            Submit
+          </button>
+        </div>
       </div>
     </form>
   `[0];
