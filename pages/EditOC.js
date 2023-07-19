@@ -79,7 +79,10 @@ class EditOC {
     let res = await protohub.post('/myoc/works', {
       body: { ...this.workData, ocid: this.ocid },
     });
+
     this.gallery.push(res);
+    this.content = this.profile;
+    d.update();
   };
 
   get validWork() { console.log(this.workData); return this.workData.url && this.workData.title }
@@ -157,7 +160,7 @@ class EditOC {
         <div class="mx-8 my-8 flex flex-wrap justify-center gap-8">
           ${d.map(() => this.gallery, x => jsx`<img class="h-48" ${{ src: x.url }}>`)}
         </div>
-        <div class="text-center">
+        <div class="text-center" ${{ hidden: () => !this.editing }}>
           <button
             class="nf nf-fa-plus w-7 aspect-square rounded-full bg-neutral-400 text-white text-xs"
             ${{ onClick: this.submitWork }}
