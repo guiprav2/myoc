@@ -15,7 +15,10 @@ class EditOC {
   constructor(props) {
     this.props = props;
     this.profile = this.content = this.renderProfile();
-    this.loadGallery();
+    (async () => {
+      await this.loadOc();
+      await this.loadGallery();
+    })();
   }
 
   get submittingWork() { return this.content !== this.profile }
@@ -35,13 +38,24 @@ class EditOC {
     d.update();
   };
 
-  profileData = { name: 'OC Name' };
+  profileData = {};
 
-  edit = async () => {
+  edit = () => { this.menuOpen = false; this.editing = true; d.update() };
+
+  save = async () => {
     this.menuOpen = false;
-    if (!this.editing) { this.editing = true; d.update(); return }
-    this.editing = false;
     d.update();
+    let [p, close] = showModal(d.el(SpinnerModal));
+    try {
+      await protohub.post('/myoc/oc', {
+        method: 'PATCH', q: { _id: this.ocid },
+        body: this.profileData,
+      });
+      this.editing = false;
+      d.update();
+    } finally {
+      close();
+    }
   };
 
   changed = ev => {
@@ -54,6 +68,18 @@ class EditOC {
   data = [
     ['', ''],
   ];
+
+  loadOc = async () => {
+    let [p, close] = showModal(d.el(SpinnerModal));
+    try {
+      let res = await protohub.get('/myoc/oc', { q: { _id: this.ocid } });
+      if (!res || !res.length) { alert('error') }
+      this.profileData = res[0];
+      d.update();
+    } finally {
+      close();
+    }
+  };
 
   loadGallery = async () => {
     let [p, close] = showModal(d.el(SpinnerModal));
@@ -124,7 +150,7 @@ class EditOC {
           ]}}>
             <a
               class="px-8 whitespace-nowrap py-2 hover:text-[#333333] hover:bg-neutral-100"
-              ${{ href: '#', onClick: this.edit }}
+              ${{ href: '#', onClick: () => !this.editing ? this.edit() : this.save() }}
             >
               ${d.text(() => !this.editing ? 'Edit OC' : 'Save OC')}
             </a>
@@ -145,11 +171,11 @@ class EditOC {
       <div class="flex flex-col gap-5 mx-8 my-10">
         <input
           class="text-lg pb-1 border-b border-neutral-300 text-[#2D2829] px-3 w-full bg-transparent outline-none"
-          ${{ placeholder: 'Title', name: 'title', disabled: () => !this.editing }}
+          ${{ placeholder: 'Title', name: 'title', value: () => this.profileData.title, disabled: () => !this.editing }}
         >
         <textarea
           class="text-[#454545] px-3 w-full bg-transparent outline-none border-b border-neutral-300 min-h-16" style="height: 18px;"
-          ${{ placeholder: 'Text...', name: 'description', disabled: () => !this.editing }}
+          ${{ placeholder: 'Text...', name: 'description', value: () => this.profileData.description, disabled: () => !this.editing }}
         ></textarea>
       </div>
       <div class="">
