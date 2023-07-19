@@ -21,9 +21,10 @@ class EditOC {
   get submittingWork() { return this.content !== this.profile }
 
   uploadAvatar = async () => {
-    let [x2, url] = await uploadFile();
-    if (x2 !== 'ok') { return }
-    this.avatar = url;
+    let [x1, x2] = await uploadFile();
+    if (x1 !== 'ok') { return }
+    this.profileData.url = x2;
+    console.log(this.profileData);
     d.update();
   };
 
@@ -136,14 +137,20 @@ class EditOC {
         ${{ onClick: this.uploadAvatar }}
       >
         ${d.if(
-          () => this.avatar,
-          jsx`<img ${{ src: () => this.avatar }}>`,
+          () => this.profileData.url,
+          jsx`<img ${{ src: () => this.profileData.url }}>`,
           jsx`<div ${{ class: () => !this.editing && 'hidden' }}>+</div>`,
         )}
       </div>
-      <div class="mx-8 my-10">
-        <div class="text-lg pb-1 border-b border-neutral-300 text-[#2D2829] px-3">Title</div>
-        <div class="text-[#454545] my-5 px-3">Text...</div>
+      <div class="flex flex-col gap-5 mx-8 my-10">
+        <input
+          class="text-lg pb-1 border-b border-neutral-300 text-[#2D2829] px-3 w-full bg-transparent outline-none"
+          ${{ placeholder: 'Title', name: 'title', disabled: () => !this.editing }}
+        >
+        <textarea
+          class="text-[#454545] px-3 w-full bg-transparent outline-none border-b border-neutral-300 min-h-16" style="height: 18px;"
+          ${{ placeholder: 'Text...', name: 'description', disabled: () => !this.editing }}
+        ></textarea>
       </div>
       <div class="">
         <div class="bg-[#FFA1C3] text-[#EAEAEA] px-5 py-1 font-semibold">OC Data</div>
