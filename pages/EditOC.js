@@ -158,16 +158,24 @@ class EditOC {
           </div>
         </div>
       </div>
-      <div
-        class="w-32 aspect-square overflow-hidden mx-auto rounded-full bg-neutral-300 flex justify-center items-center text-5xl text-white"
-        ${{ onClick: this.uploadAvatar }}
+      <button
+        class="relative w-32 aspect-square overflow-hidden mx-auto rounded-full bg-neutral-300 flex justify-center items-center text-5xl text-white"
+        ${{ type: 'button', onClick: this.uploadAvatar, disabled: () => !this.editing }}
       >
         ${d.if(
           () => this.profileData.url,
-          jsx`<img ${{ src: () => this.profileData.url }}>`,
+          jsx`
+            <img ${{ src: () => this.profileData.url }}>
+            <div ${{ class: [
+              'absolute left-0 right-0 top-0 bottom-0 flex justify-center items-center text-xs bg-neutral-700/70 opacity-0 hover:opacity-100',
+              () => !this.editing && 'hidden',
+            ]}}>
+              Change
+            </div>
+          `,
           jsx`<div ${{ class: () => !this.editing && 'hidden' }}>+</div>`,
         )}
-      </div>
+      </button>
       <div class="flex flex-col gap-5 mx-8 my-10">
         <input
           class="text-lg pb-1 border-b border-neutral-300 text-[#2D2829] px-3 w-full bg-transparent outline-none"
