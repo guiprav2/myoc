@@ -1,3 +1,4 @@
+import Lightbox from '../components/Lightbox.js';
 import SpinnerModal from '../components/SpinnerModal.js';
 import UploadDialog from '../components/UploadDialog.js';
 import d from '../dominant.js';
@@ -23,6 +24,8 @@ class EditOC {
   }
 
   get submittingWork() { return this.content !== this.profile }
+
+  showWork = x => showModal(d.el(Lightbox, { urls: this.gallery.map(x => x.url), x }));
 
   uploadAvatar = async () => {
     let [x1, x2] = await uploadFile();
@@ -207,8 +210,12 @@ class EditOC {
           `)}
         </div>
         <div class="bg-[#FFA1C3] text-[#EAEAEA] px-5 py-1 font-semibold">Gallery</div>
-        <div class="mx-8 my-8 flex flex-wrap justify-center gap-8">
-          ${d.map(() => this.gallery, x => jsx`<img class="h-48" ${{ src: x.url }}>`)}
+        <div class="sm:mx-8 my-8 flex flex-wrap justify-center gap-8">
+          ${d.map(() => this.gallery, x => jsx`
+            <a ${{ href: '#', onClick: () => this.showWork(x.url) }}>
+              <img class="h-48" ${{ src: x.url }}>
+            </a>
+          `)}
         </div>
         <div class="text-center" ${{ hidden: () => !this.ocid || this.editing }}>
           <button
