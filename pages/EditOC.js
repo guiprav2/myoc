@@ -8,12 +8,12 @@ import { showModal } from '../util/modal.js';
 import { uploadFile } from '../util/file.js';
 
 class EditOC {
-  ocid = '1';
+  ocid = null;
   view = 'profile';
-  editing = false;
 
   constructor(props) {
     this.props = props;
+    this.editing = !this.ocid;
     this.profile = this.content = this.renderProfile();
     (async () => {
       await this.loadOc();
@@ -47,10 +47,12 @@ class EditOC {
     d.update();
     let [p, close] = showModal(d.el(SpinnerModal));
     try {
-      await protohub.post('/myoc/oc', {
-        method: 'PATCH', q: { _id: this.ocid },
+      let res = await protohub.post('/myoc/oc', {
+        method: this.ocid ? 'PATCH' : 'POST',
+        q: this.ocid ? { _id: this.ocid } : {},
         body: this.profileData,
       });
+      this.ocid = res._id;
       this.editing = false;
       d.update();
     } finally {
@@ -70,6 +72,7 @@ class EditOC {
   ];
 
   loadOc = async () => {
+    if (!this.ocid) { return }
     let [p, close] = showModal(d.el(SpinnerModal));
     try {
       let res = await protohub.get('/myoc/oc', { q: { _id: this.ocid } });
@@ -82,6 +85,9 @@ class EditOC {
   };
 
   loadGallery = async () => {
+    console.log('loading gallery...');
+    this.gallery = [];
+    if (!this.ocid) { return }
     let [p, close] = showModal(d.el(SpinnerModal));
     try {
       let res = await protohub.get('/myoc/works', { q: { ocid: this.ocid } });
@@ -107,8 +113,8 @@ class EditOC {
       body: { ...this.workData, ocid: this.ocid },
     });
 
-    this.gallery.push(res);
     this.content = this.profile;
+    this.loadGallery();
     d.update();
   };
 
@@ -124,7 +130,7 @@ class EditOC {
   renderProfile = () => jsx`
     <form
       class="max-w-5xl min-h-screen mx-auto p-0 sans bg-[#F1F1F1] flex flex-col pb-10 shadow-lg"
-      ${{ onChange: this.changed }}
+      ${{ model: this, onChange: this.changed }}
     >
       <div class="relative">
         <div class="sticky left-0 right-0 top-0 bg-[#2D2829] z-10">
@@ -139,7 +145,7 @@ class EditOC {
       <div class="mt-8 mb-5 flex gap-3 items-center grid grid-cols-3 px-4">
         <input
           class="col-start-2 justify-self-center text-[#FA3973] font-semibold text-xl bg-transparent outline-none text-center"
-          ${{ name: 'name', value: () => this.profileData.name, disabled: () => !this.editing }}
+          ${{ name: 'name', placeholder: 'OC Name', value: () => this.profileData.name, disabled: () => !this.editing }}
         >
         <div class="relative -top-4 justify-self-end flex justify-center aspect-square">
           <button type="button" class="text-neutral-500 group" ${{ onClick: () => this.menuOpen = !this.menuOpen }}>
@@ -168,10 +174,10 @@ class EditOC {
           jsx`
             <img ${{ src: () => this.profileData.url }}>
             <div ${{ class: [
-              'absolute left-0 right-0 top-0 bottom-0 flex justify-center items-center text-xs bg-neutral-700/70 opacity-0 hover:opacity-100',
+              'absolute left-0 right-0 top-0 bottom-0 flex justify-center items-center rounded-full text-xs bg-neutral-700/70 opacity-0 hover:opacity-100 shadow-inset',
               () => !this.editing && 'hidden',
             ]}}>
-              Change
+              change
             </div>
           `,
           jsx`<div ${{ class: () => !this.editing && 'hidden' }}>+</div>`,
@@ -202,7 +208,7 @@ class EditOC {
         <div class="mx-8 my-8 flex flex-wrap justify-center gap-8">
           ${d.map(() => this.gallery, x => jsx`<img class="h-48" ${{ src: x.url }}>`)}
         </div>
-        <div class="text-center" ${{ hidden: () => !this.editing }}>
+        <div class="text-center" ${{ hidden: () => !this.ocid || this.editing }}>
           <button
             class="nf nf-fa-plus w-7 aspect-square rounded-full bg-neutral-400 text-white text-xs"
             ${{ onClick: this.submitWork }}
