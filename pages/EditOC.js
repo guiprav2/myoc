@@ -105,7 +105,6 @@ class EditOC {
 
   submitWork = async ev => {
     ev && ev.preventDefault();
-
     if (!this.submittingWork) {
       this.workData = {};
       this.content = this.renderWorkModal();
@@ -114,6 +113,7 @@ class EditOC {
     }
 
     if (!this.validWork) { return }
+    this.submitBtn.disabled = true;
     let res = await protohub.post('/myoc/works', {
       body: { ...this.workData, ocid: this.ocid },
     });
@@ -262,12 +262,10 @@ class EditOC {
             <div>Tags</div>
             <input class="w-full bg-transparent outline-none text-[#333333]" name="tags">
           </div>
-          <button ${{
+          ${this.submitBtn = d.el('button', {
             class: ['h-10 mb-16 text-white bg-[#FA3973]', () => !this.validWork && 'bg-[#FFA1C4]'],
             disabled: () => !this.validWork,
-          }}>
-            Submit
-          </button>
+          }, 'Submit')}
         </div>
       </div>
     </form>
