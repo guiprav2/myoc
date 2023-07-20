@@ -2,6 +2,7 @@ import d from './dominant.js';
 
 class Router {
   constructor(props) {
+    console.log(123);
     window.router = this;
     this.props = props;
     addEventListener('click', this.onClick);
