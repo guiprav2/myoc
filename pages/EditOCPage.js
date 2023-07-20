@@ -17,6 +17,7 @@ class EditOCPage {
     let q = qs.decode(location.search.slice(1));
     this.ocid = q?.id;
     this.profileData.pid = q?.pid;
+    this.back = q?.back;
     this.editing = !this.ocid;
     this.profile = this.content = this.renderProfile();
     (async () => {
@@ -61,8 +62,12 @@ class EditOCPage {
       });
       !this.ocid && history.pushState({}, null, `/create?id=${res._id}`);
       this.ocid = res._id;
-      this.editing = false;
-      d.update();
+      if (!this.back) {
+        this.editing = false;
+        d.update();
+      } else {
+        navigate(this.back);
+      }
     } finally {
       close();
     }

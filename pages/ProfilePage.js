@@ -146,10 +146,13 @@ class ProfilePage {
           <div class="text-xl text-[#FA3973] flex items-center gap-4 group">
             OC Profiles
             ${d.if(() => this.ocs.length, jsx`
-              <a
-                class="w-8 aspect-square flex justify-center bg-neutral-300 rounded-full text-neutral-500"
-                ${{ href: () => `/create?pid=${this.pid}` }}
-              >+</a>
+              <a ${{
+                class: [
+                  'w-8 aspect-square flex justify-center bg-neutral-300 rounded-full text-neutral-500',
+                  () => this.editing && 'hidden',
+                ],
+                href: () => `/create?${qs.encode({ pid: this.pid, back: `/profile?id=${this.pid}` })}`,
+              }}>+</a>
             `)}
           </div>
           ${d.if(() => !this.ocs.length, jsx`
