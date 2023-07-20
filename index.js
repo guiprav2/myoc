@@ -1,4 +1,5 @@
 import EditOCPage from './pages/EditOCPage.js';
+import ListPage from './pages/ListPage.js';
 import ProfilePage from './pages/ProfilePage.js';
 import Router from './Router.js';
 import SignInPage from './pages/SignInPage.js';
@@ -14,6 +15,7 @@ addEventListener('DOMContentLoaded', () => {
     routes: {
       '/': SignInPage,
       '/signup': SignUpPage,
+      '/list': ListPage,
       '/profile': ProfilePage,
       '/create': EditOCPage,
     },

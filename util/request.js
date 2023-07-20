@@ -1,4 +1,4 @@
-import qs from 'https://cdn.skypack.dev/querystring';
+import qs from 'https://cdn.skypack.dev/qs';
 
 class Requester {
   constructor(prefix = '') { this.prefix = prefix }
@@ -6,7 +6,7 @@ class Requester {
   get = async (path, opt) => {
     opt = { ...opt };
     let { q, withHeaders } = opt; delete opt.q; delete opt.withHeaders;
-    q && (path += `?${qs.encode(q)}`);
+    q && (path += `?${qs.stringify(q)}`);
     let res = await fetch(`${this.prefix}${path}`, opt);
     if (!res.ok) { throw new Error(`cannot get: ${res.status}`) }
     if (res.headers.get('content-type')?.startsWith('application/json')) {
@@ -18,7 +18,7 @@ class Requester {
   post = async (path, opt) => {
     opt = { ...opt };
     let { text, q } = opt; delete opt.text; delete opt.q;
-    q && (path += `?${qs.encode(q)}`);
+    q && (path += `?${qs.stringify(q)}`);
     let res = await fetch(`${this.prefix}${path}`, {
       method: 'POST',
       ...opt,
