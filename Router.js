@@ -2,6 +2,7 @@ import d from './dominant.js';
 
 class Router {
   constructor(props) {
+    window.router = this;
     this.props = props;
     addEventListener('click', this.onClick);
     addEventListener('popstate', () => this.update());
