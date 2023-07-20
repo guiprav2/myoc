@@ -160,7 +160,7 @@ class ProfilePage {
               ${d.text(() => !this.editing ? '+ Add your first' : 'Save your profile first')}
             </a>
           `, jsx`
-            <div class="flex gap-5 flex-wrap text-[#FA3973]">
+            <div class="flex justify-center sm:justify-start gap-5 flex-wrap text-[#FA3973]">
               ${d.map(() => this.ocs, x => jsx`
                 <a
                   class="p-4 flex flex-col items-center gap-3"
