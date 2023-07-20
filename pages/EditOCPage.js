@@ -9,12 +9,14 @@ import { protohub } from '../util/request.js';
 import { showModal } from '../util/modal.js';
 import { uploadFile } from '../util/file.js';
 
-class EditOC {
+class EditOCPage {
   view = 'profile';
 
   constructor(props) {
     this.props = props;
-    this.ocid = qs.decode(location.search.slice(1))?.id;
+    let q = qs.decode(location.search.slice(1));
+    this.ocid = q?.id;
+    this.profileData.pid = q?.pid;
     this.editing = !this.ocid;
     this.profile = this.content = this.renderProfile();
     (async () => {
@@ -30,7 +32,7 @@ class EditOC {
   uploadAvatar = async () => {
     let [x1, x2] = await uploadFile();
     if (x1 !== 'ok') { return }
-    this.profileData.url = x2;
+    this.profileData.avatar = x2;
     console.log(this.profileData);
     d.update();
   };
@@ -49,6 +51,7 @@ class EditOC {
   save = async () => {
     this.menuOpen = false;
     d.update();
+    if (!this.profileData.pid) { alert('missing pid'); return }
     let [p, close] = showModal(d.el(SpinnerModal));
     try {
       let res = await protohub.post('/myoc/oc', {
@@ -175,9 +178,9 @@ class EditOC {
         ${{ type: 'button', onClick: this.uploadAvatar, disabled: () => !this.editing }}
       >
         ${d.if(
-          () => this.profileData.url,
+          () => this.profileData.avatar,
           jsx`
-            <img ${{ src: () => this.profileData.url }}>
+            <img ${{ src: () => this.profileData.avatar }}>
             <div ${{ class: [
               'absolute left-0 right-0 top-0 bottom-0 flex justify-center items-center rounded-full text-xs bg-neutral-700/70 opacity-0 hover:opacity-100 shadow-inset',
               () => !this.editing && 'hidden',
@@ -272,4 +275,4 @@ class EditOC {
   `[0];
 }
 
-export default EditOC;
+export default EditOCPage;
