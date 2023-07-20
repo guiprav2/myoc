@@ -75,15 +75,17 @@ class ListPage {
         <div class="px-3 py-1 rounded-full">Gallery</div>
       </div>
       ${d.map(() => this.ocs, x => jsx`
-        <div class="pt-10">
-          <div class="w-32 mx-auto aspect-square rounded-full bg-neutral-300 flex justify-center items-center text-5xl text-white overflow-hidden" src="http://filet.guiprav.com/webfoundry/e9432a30-a664-4d70-947a-224184159c64/avatar_WhatsApp Image 2023-07-02 at 17.39.58(2).jpeg">
-            <img ${{ src: () => x.avatar }}>
-          </div>
-          <div class="my-5 flex gap-3 items-center grid grid-cols-3 px-4">
-            <div class="col-start-2 justify-self-center text-[#FA3973] font-semibold text-xl bg-transparent outline-none text-center">
-              ${d.text(() => x.name)}
+        <div class="flex justify-center pt-10">
+          <a ${{ href: () => `/create?id=${x._id}` }}>
+            <div class="w-32 mx-auto aspect-square rounded-full bg-neutral-300 flex justify-center items-center text-5xl text-white overflow-hidden" src="http://filet.guiprav.com/webfoundry/e9432a30-a664-4d70-947a-224184159c64/avatar_WhatsApp Image 2023-07-02 at 17.39.58(2).jpeg">
+              <img ${{ src: () => x.avatar }}>
             </div>
-          </div>
+            <div class="my-5 flex gap-3 items-center grid grid-cols-3 px-4">
+              <div class="col-start-2 justify-self-center text-[#FA3973] font-semibold text-xl bg-transparent outline-none text-center">
+                ${d.text(() => x.name)}
+              </div>
+            </div>
+          </a>
         </div>
         <div class="w-96 mx-auto aspect-square bg-neutral-300 flex items-center relative text-xl">
           <button
