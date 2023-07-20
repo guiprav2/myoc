@@ -99,7 +99,7 @@ class ListPage {
           <img ${{ src: () => this.worksFor(x._id)[x.i || 0]?.url }}>
         </div>
         <div class="w-96 mx-auto flex text-sm justify-between py-2 border-b border-[#E3D9D9BD]">
-          <div class="flex gap-5">
+          <div class="flex gap-5 px-4 sm:px-0">
             <div class="flex items-center gap-2 text-[#A7A7A7]">
               <i class="nf nf-fa-eye text-lg text-[#FFA1C3]"></i>
               <span class="">0</span>
